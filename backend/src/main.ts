@@ -11,7 +11,6 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   app.use(cookieParser());
 
   await app.listen(process.env.PORT ?? 3001);

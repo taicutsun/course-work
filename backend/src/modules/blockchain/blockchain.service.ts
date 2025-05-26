@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { ethers } from 'ethers';
 import * as LockContract from '@contracts/Lock.sol/Lock.json';
 import * as ContractAddress from '@ignition/deployments/chain-31337/deployed_addresses.json';
+import { SendEtherDto } from './schemas/send-ether.schema';
 
 @Injectable()
 export class BlockchainService implements OnModuleInit {
@@ -24,9 +25,7 @@ export class BlockchainService implements OnModuleInit {
     const owner = new ethers.Wallet(this.ownerKey, this.provider);
 
     this.contract = new ethers.Contract(
-      //todo remove
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      ContractAddress['LockModule#Lock'] as string,
+      ContractAddress['LockModule#Lock'],
       LockContract.abi,
       owner,
     );
@@ -52,13 +51,14 @@ export class BlockchainService implements OnModuleInit {
     }
   }
 
-  async sendEther(
-    blockchainId: number,
-    to: string,
-    amountInEther: string,
-  ): Promise<string> {
-    const amountInWei = ethers.parseEther(amountInEther);
-    const signer = await this.provider.getSigner(blockchainId);
+  //todo add status code
+  async sendEther({
+    signerId,
+    to,
+    amountEther,
+  }: SendEtherDto): Promise<string> {
+    const amountInWei = ethers.parseEther(amountEther);
+    const signer = await this.provider.getSigner(signerId);
     const tx = await signer.sendTransaction({
       to,
       value: amountInWei,

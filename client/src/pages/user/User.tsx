@@ -1,23 +1,33 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React from "react";
+import React, {useEffect,useState} from "react";
 import "../../App.css";
 import "./User.css";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import {
   CheckUserPass,
   createUser,
   selectUserName,
-  selectUserBalance,
+  selectUserBalance, selectUserIndex, setBalance,
 } from "../../app/appSlice";
 import { NavBar } from "../nav/NavBar";
+import axios from "axios";
 
 function UserPage() {
+  const dispatch = useAppDispatch();
+
   const username: string = useAppSelector(selectUserName);
+  const cryptoI = useAppSelector(selectUserIndex);
   const balance: number = useAppSelector(selectUserBalance);
   // const dispatch = useAppDispatch();
-  console.log(document.cookie);
+  useEffect( () => {
+     axios.get('http://localhost:3001/blockchain/getBalance', {
+      params: { cryptoI },
+      withCredentials: true,
+    }).then((res:any)=>{
+      dispatch(setBalance(res.data));
+     })
+  }, [dispatch,cryptoI]);
 
   return (
     <div>

@@ -47,12 +47,11 @@ export function LoginPage() {
       axLogin(user, pass).then((res) => {
         console.log(res);
 
-        const pending: UserState = {
+        const pending: Omit<UserState,'balance'> = {
           //для корректной отправки состаяния пользователя
           username: user,
           password: pass,
           logged: "pending",
-          balance: res.balance,
           cryptoI: res.cryptoI,
         };
 

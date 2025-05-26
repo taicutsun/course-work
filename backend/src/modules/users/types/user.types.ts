@@ -1,4 +1,4 @@
-export type User = {
+export type UserType = {
   id: string;
   username: string;
   password: string;
@@ -7,6 +7,6 @@ export type User = {
 
 export type UserResponse = {
   message: string;
-  user?: User;
+  user?: UserType;
   isCreated?: boolean;
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { setExist } from "../pages/user/User"; //todo delete
 
-const API_URL = "http://localhost:3001";
+export const API_URL = "http://localhost:3001";
 
 let tokens = {
   accessToken: "",
@@ -41,11 +41,6 @@ export async function sendAccToken() {
     .then((res) => {
       console.log("sended acc");
     })
-    .catch((err) => {
-      if (err.response) console.log("error in acctoken");
-      else if (err.request) console.log("req");
-      else console.log("me AcT");
-    });
 } //todo delete
 
 export async function sendRefToken() {

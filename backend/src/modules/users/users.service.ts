@@ -1,42 +1,60 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './schemas/create-user.schema';
-import { User, UserResponse } from './types/user.types';
+import { UserResponse } from './types/user.types';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../db/user.entity';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [
-    { id: '1', username: 'test', password: 'test', cryptoI: 0 },
-  ];
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
   private indexOfUser = 1; // Start from 1 since we already have one user
 
-  findAll(): User[] {
-    return this.users;
+  findAll(): Promise<User[]> {
+    return this.usersRepository.find();
   }
 
-  //todo: replace with id
-  //todo when db is implemented make it async
-  findOne(username: string): User | undefined {
-    return this.users.find((user) => user.username === username);
+  findOne(username: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({ username });
   }
 
-  create(createUserDto: CreateUserDto): UserResponse {
-    const existingUser = this.findOne(createUserDto.username);
+  /*async remove(id: number): Promise<void> {
+    await this.usersRepository.delete(id);
+  }*/
+
+  async create(createUserDto: CreateUserDto): Promise<UserResponse> {
+    const existingUser = await this.findOne(createUserDto.username);
 
     if (existingUser) {
-      //todo: return code mb 400
+      //todo: return code not this
       return { message: 'User already created', isCreated: true };
     }
 
-    const newUser: User = {
+    /*const newUser: User = {
       id: (this.indexOfUser + 1).toString(),
       username: createUserDto.username,
       password: createUserDto.password,
       cryptoI: this.indexOfUser,
-    };
+    };*/
+    const newUser = this.usersRepository.create({
+      username: createUserDto.username,
+      password: createUserDto.password,
+      cryptoI: this.indexOfUser,
+    });
 
-    this.users.push(newUser);
-    this.indexOfUser++;
+    try {
+      const savedUser = await this.usersRepository.save(newUser);
 
-    return { message: 'New user logged', user: newUser };
+      this.indexOfUser++;
+      return { message: 'New user logged', user: savedUser, isCreated: true }; //todo replace with normal response
+    } catch (error) {
+      return {
+        message: 'Error creating user',
+        isCreated: false,
+      };
+    }
   }
 }

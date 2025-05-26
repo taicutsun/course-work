@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
-import { User } from '../users/types/user.types';
+import { UserType } from '../users/types/user.types';
 
 @Injectable()
 export class AuthService {
@@ -14,14 +14,14 @@ export class AuthService {
     private usersService: UsersService,
   ) {}
 
-  generateAccessToken(user: User): string {
+  generateAccessToken(user: UserType): string {
     return this.jwtService.sign(
       { username: user.username, sub: user.id },
       { expiresIn: '15s' },
     );
   }
 
-  generateRefreshToken(user: User): string {
+  generateRefreshToken(user: UserType): string {
     const refreshToken = this.jwtService.sign(
       { username: user.username, sub: user.id },
       {
@@ -34,7 +34,7 @@ export class AuthService {
     return refreshToken;
   }
 
-  refreshAccessToken(refreshToken: string): string {
+  async refreshAccessToken(refreshToken: string): Promise<string> {
     if (!this.refreshTokens.includes(refreshToken)) {
       throw new UnauthorizedException('Invalid refresh token');
     }
@@ -47,8 +47,10 @@ export class AuthService {
         },
       );
 
-      const user = this.usersService.findOne(payload.username);
+      const user = await this.usersService.findOne(payload.username);
+
       if (!user) {
+        // noinspection ExceptionCaughtLocallyJS
         throw new UnauthorizedException('User not found');
       }
 
@@ -67,12 +69,11 @@ export class AuthService {
     }
   }
 
-  //todo when db is implemented make it async
   async signIn(
     username: string,
     pass: string,
-  ): Promise<{ user: User; accessToken: string }> {
-    const user = this.usersService.findOne(username);
+  ): Promise<{ user: UserType; accessToken: string }> {
+    const user = await this.usersService.findOne(username);
 
     if (user?.password !== pass) {
       throw new UnauthorizedException();

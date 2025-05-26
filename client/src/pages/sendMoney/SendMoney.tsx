@@ -14,56 +14,36 @@ import { NavBar } from "../nav/NavBar";
 import { axGetPublicKeys } from "../../api/posts";
 import axios from "axios";
 
-function Publickeys() {
-  const [isLoading, setValueLoading] = useState(true);
-  const [addresses, setAdresses] = useState([]);
-
-  useEffect(() => {
-    axGetPublicKeys().then((res) => {
-      if (res.status) setAdresses(res.addresses);
-    });
-  }, []);
-
-  useEffect(() => {
-    setValueLoading(false);
-  }, [addresses]);
-
-  return (
-    <>
-      {isLoading ? (
-        <>loading </>
-      ) : (
-        <ul>
-          {addresses.map((address: string, index: number) => (
-            <li key={index}>{address}</li>
-          ))}
-        </ul>
-      )}
-    </>
-  );
-}
-
 export function SendMoney() {
   const dispatch = useAppDispatch();
 
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState(0);
-  const [checkForInput, setcheckForInput] = useState(false);
+  const [checkForInput, setCheckForInput] = useState(false);
   const [click, setClick] = useState(0);
   const [msg, setMsg] = useState("");
   const [cryptoType, setCryptoType] = useState("ETH"); // Default crypto type
+  const [publicKeys, setPublicKeys] = useState<string[]>();
+
   const cryptoOptions = [
     { id: "ETH", name: "Ethereum" },
     { id: "BTC", name: "Bitcoin" },
-    { id: "LTC", name: "Litecoin" },
+    { id: "LTC", name: "LiteCoin" },
   ];
 
   const balance: number = useAppSelector(selectUserBalance);
   const cryptoI: number = useAppSelector(selectUserIndex);
 
+
   useEffect(() => {
-    if (amount > 0) setcheckForInput(true);
-    else setcheckForInput(false);
+    axGetPublicKeys().then((res) => {
+     setPublicKeys(res);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (amount > 0) setCheckForInput(true);
+    else setCheckForInput(false);
 
     if (click > 0) {
       let converted: number = amount;
@@ -72,10 +52,12 @@ export function SendMoney() {
       else if (cryptoType === "LTC") converted = amount * 0.027;
 
       axios
-        .post("http://localhost:3001/sendMoney", {
-          cryptoI: cryptoI,
-          _to: address,
+        .post("http://localhost:3001/blockchain/sendEther", {
+          signerId: cryptoI || 0,
+          to: address,
           amountEther: converted.toString(),
+        },{
+          withCredentials: true,
         })
         .then((res: any) => {
           console.log(res.data);
@@ -84,11 +66,6 @@ export function SendMoney() {
           setMsg(res.data.msg);
           setClick(0);
         })
-        .catch((err) => {
-          if (err.response) console.log("error in sendmoney");
-          else if (err.request) console.log("req sendmoney");
-          else console.log("me sendmoney");
-        });
     }
   }, [amount, address, click, cryptoType, cryptoI, dispatch]);
 
@@ -124,13 +101,14 @@ export function SendMoney() {
               pattern="[0-9]*"
               onChange={(e) => setAmount(parseFloat(e.target.value))}
             />
-            <label className="form-label">адресс</label>
-            <input
-              type="text"
-              name="address"
-              className="form-input"
-              onChange={(e) => setAddress(e.target.value)}
-            />
+            <label className="form-label">адресс получателя</label>
+            <select style={{width: "50%", marginBottom:'20px',borderRadius:'5px'}}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}>
+              {publicKeys?.map((publicKey)=>(
+                  <option value={publicKey}>{publicKey}</option>
+              ))}
+            </select>
             {checkForInput && address !== "" ? (
               <button
                 className="send-button"
@@ -148,11 +126,6 @@ export function SendMoney() {
             )}
             <div>{msg}</div>
           </form>
-        </div>
-        <div className="right-panel">
-          <div>
-            public keys: <Publickeys />
-          </div>
         </div>
       </div>
     </>

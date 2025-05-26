@@ -31,11 +31,10 @@ export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<UserState>) {
+    setUser(state, action: PayloadAction<Omit<UserState,'balance'>>) {
       //login
       state.logged = action.payload.logged;
       state.username = action.payload.username;
-      state.balance = action.payload.balance;
       state.cryptoI = action.payload.cryptoI;
     },
     createUser(state, action: PayloadAction<CheckUserPass>) {
@@ -44,13 +43,16 @@ export const appSlice = createSlice({
       if (state.password === action.payload.secPass && state.password !== "")
         axCreateUser(state.username, state.password);
     },
+    setBalance(state, action: PayloadAction<number>) {
+      state.balance = action.payload;
+    },
     changeBal(state, action: PayloadAction<number>) {
       state.balance -= action.payload;
     },
   },
 });
 
-export const { setUser, createUser, changeBal } = appSlice.actions;
+export const { setUser, createUser,setBalance, changeBal } = appSlice.actions;
 
 export const selectLog = (state: RootState) => state.app; //if logged
 export const selectUserName = (state: RootState) => state.app.username; //users name
