@@ -7,7 +7,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { setUser, selectLog, UserState } from "../../app/appSlice";
 //redux imports
-import { axLogin } from "../../api/posts";
+import { axLogin } from "../../api/api";
 
 interface ErrMassProps {
   cl: number;
@@ -48,26 +48,20 @@ export function LoginPage() {
         console.log(res);
 
         const pending: Omit<UserState,'balance'> = {
-          //для корректной отправки состаяния пользователя
           username: user,
           password: pass,
           logged: "pending",
-          cryptoI: res.cryptoI,
+          cryptoI: res.user.cryptoI,
         };
-
-        if (res.accessToken) {
-          // In your login handler
-          document.cookie = `accessToken=${
-            res.accessToken
-          }; Path=/; SameSite=Strict${
-            window.location.protocol === "https:" ? "; Secure" : ""
-          }`;
 
           dispatch(setUser(pending));
           setStatus(true);
           setClick(0);
-        } else if (!res.status) dispatch(setUser(failed));
-      });
+
+      })
+       .catch(() => {
+            dispatch(setUser(failed));
+          });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [click, status]);

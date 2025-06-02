@@ -30,9 +30,4 @@ export class JwtGuard implements CanActivate {
       throw new UnauthorizedException(error);
     }
   }
-
-  private extractTokenFromHeader(request: Request): string | null {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : null;
-  }
 }

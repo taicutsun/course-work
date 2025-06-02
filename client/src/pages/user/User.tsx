@@ -11,7 +11,7 @@ import {
   selectUserBalance, selectUserIndex, setBalance,
 } from "../../app/appSlice";
 import { NavBar } from "../nav/NavBar";
-import axios from "axios";
+import {api} from "../../api/interceptor";
 
 function UserPage() {
   const dispatch = useAppDispatch();
@@ -19,13 +19,12 @@ function UserPage() {
   const username: string = useAppSelector(selectUserName);
   const cryptoI = useAppSelector(selectUserIndex);
   const balance: number = useAppSelector(selectUserBalance);
-  // const dispatch = useAppDispatch();
-  useEffect( () => {
-     axios.get('http://localhost:3001/blockchain/getBalance', {
+
+   useEffect( () => {
+     api.get('/blockchain/getBalance', {
       params: { cryptoI },
-      withCredentials: true,
     }).then((res:any)=>{
-      dispatch(setBalance(res.data));
+      dispatch(setBalance(res.data.balance));
      })
   }, [dispatch,cryptoI]);
 

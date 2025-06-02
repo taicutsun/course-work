@@ -2,17 +2,15 @@ import React from "react";
 import "../../App.css";
 import "./SendMoney.css";
 import { useState, useEffect } from "react";
-//redux imports
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   changeBal,
   selectUserBalance,
   selectUserIndex,
 } from "../../app/appSlice";
-//redux imports
 import { NavBar } from "../nav/NavBar";
-import { axGetPublicKeys } from "../../api/posts";
-import axios from "axios";
+import { axGetPublicKeys} from "../../api/api";
+import {api} from "../../api/interceptor";
 
 export function SendMoney() {
   const dispatch = useAppDispatch();
@@ -24,6 +22,7 @@ export function SendMoney() {
   const [msg, setMsg] = useState("");
   const [cryptoType, setCryptoType] = useState("ETH"); // Default crypto type
   const [publicKeys, setPublicKeys] = useState<string[]>();
+const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const cryptoOptions = [
     { id: "ETH", name: "Ethereum" },
@@ -46,21 +45,20 @@ export function SendMoney() {
     else setCheckForInput(false);
 
     if (click > 0) {
+      setIsButtonDisabled(true);
       let converted: number = amount;
 
-      if (cryptoType === "BTC") converted = amount * 21.72;
-      else if (cryptoType === "LTC") converted = amount * 0.027;
+      if (cryptoType === "BTC") converted = amount * 42.93;
+      else if (cryptoType === "LTC") converted = amount * 0.037;
 
-      axios
-        .post("http://localhost:3001/blockchain/sendEther", {
+      api
+        .post('/blockchain/sendEther', {
           signerId: cryptoI || 0,
           to: address,
           amountEther: converted.toString(),
-        },{
-          withCredentials: true,
         })
-        .then((res: any) => {
-          console.log(res.data);
+        .then((res) => {
+          setIsButtonDisabled(false);
 
           dispatch(changeBal(converted));
           setMsg(res.data.msg);
@@ -111,6 +109,7 @@ export function SendMoney() {
             </select>
             {checkForInput && address !== "" ? (
               <button
+                disabled={isButtonDisabled}
                 className="send-button"
                 onClick={(e) => {
                   e.preventDefault();

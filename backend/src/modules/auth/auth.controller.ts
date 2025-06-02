@@ -5,10 +5,10 @@ import {
   HttpCode,
   HttpStatus,
   UnauthorizedException,
-  UseGuards,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { AuthService } from './auth.service';
-import { JwtGuard } from '../../common/guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -21,17 +21,7 @@ export class AuthController {
   }
 
   @Post('token')
-  @UseGuards(JwtGuard)
-  refreshToken(@Body('token') refreshToken: string) {
-    if (!refreshToken) {
-      throw new UnauthorizedException('Refresh token is required');
-    }
-
-    try {
-      const accessToken = this.authService.refreshAccessToken(refreshToken);
-      return accessToken;
-    } catch {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
+  refreshToken(@Req() req: Request): Promise<{ accessToken: string }> {
+    return this.authService.refreshAccessToken(req.cookies['refreshToken']);
   }
 }

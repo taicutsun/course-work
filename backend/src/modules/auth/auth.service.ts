@@ -17,7 +17,7 @@ export class AuthService {
   generateAccessToken(user: UserType): string {
     return this.jwtService.sign(
       { username: user.username, sub: user.id },
-      { expiresIn: '15s' },
+      { expiresIn: '7d' },
     );
   }
 
@@ -34,7 +34,12 @@ export class AuthService {
     return refreshToken;
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<string> {
+  async refreshAccessToken(
+    refreshToken: string,
+  ): Promise<{ accessToken: string }> {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
     if (!this.refreshTokens.includes(refreshToken)) {
       throw new UnauthorizedException('Invalid refresh token');
     }
@@ -54,18 +59,9 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
-      return this.generateAccessToken(user);
+      return { accessToken: this.generateAccessToken(user) };
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
-    }
-  }
-
-  validateToken(token: string): boolean {
-    try {
-      this.jwtService.verify(token);
-      return true;
-    } catch {
-      return false;
     }
   }
 
@@ -79,7 +75,8 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
+    const refreshToken = this.generateRefreshToken(user);
     const accessToken = this.generateAccessToken(user);
-    return Promise.resolve({ user, accessToken });
+    return Promise.resolve({ user, accessToken, refreshToken });
   }
 }

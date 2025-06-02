@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateUserDto } from './schemas/create-user.schema';
 import { UserResponse } from './types/user.types';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,24 +25,17 @@ export class UsersService {
     return this.usersRepository.findOneBy({ username });
   }
 
-  /*async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
-  }*/
-
   async create(createUserDto: CreateUserDto): Promise<UserResponse> {
     const existingUser = await this.findOne(createUserDto.username);
 
     if (existingUser) {
-      //todo: return code not this
-      return { message: 'User already created', isCreated: true };
+      throw new ConflictException({
+        statusCode: 409,
+        message: 'User already exists',
+        isCreated: false,
+      });
     }
 
-    /*const newUser: User = {
-      id: (this.indexOfUser + 1).toString(),
-      username: createUserDto.username,
-      password: createUserDto.password,
-      cryptoI: this.indexOfUser,
-    };*/
     const newUser = this.usersRepository.create({
       username: createUserDto.username,
       password: createUserDto.password,
@@ -49,12 +46,13 @@ export class UsersService {
       const savedUser = await this.usersRepository.save(newUser);
 
       this.indexOfUser++;
-      return { message: 'New user logged', user: savedUser, isCreated: true }; //todo replace with normal response
+      return { message: 'New user logged', user: savedUser, isCreated: true };
     } catch (error) {
-      return {
+      throw new InternalServerErrorException({
+        statusCode: 500,
         message: 'Error creating user',
-        isCreated: false,
-      };
+        error: error,
+      });
     }
   }
 }

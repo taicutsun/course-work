@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { axCreateUser } from "../api/posts";
+import { axCreateUser } from "../api/api";
 
 //interface and state
 export interface CheckUserPass {

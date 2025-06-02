@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpCode } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { createUserSchema, CreateUserDto } from './schemas/create-user.schema';
 import { CreateUserValidation } from './pipes/CreateUserValidation.pipe';
@@ -19,6 +19,7 @@ export class UsersController {
   }
 
   @Post('create')
+  @HttpCode(201)
   create(
     @Body(new CreateUserValidation(createUserSchema))
     createUserDto: CreateUserDto,

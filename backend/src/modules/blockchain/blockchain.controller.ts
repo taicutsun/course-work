@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Query,
+  BadRequestException,
+} from '@nestjs/common';
 import { BlockchainService } from './blockchain.service';
 import { SendEtherDto, sendEtherSchema } from './schemas/send-ether.schema';
 import { SendEtherValidation } from './pipes/SendEtherValidation.pipe';
@@ -17,7 +25,7 @@ export class BlockchainController {
   @Get('getBalance')
   @UseGuards(JwtGuard)
   async balance(@Query('cryptoI') id: number) {
-    return this.blockchainService.getBalance(id);
+    return this.blockchainService.getBalance(Number(id));
   }
 
   @Post('sendEther')
