@@ -1,8 +1,8 @@
 <img width="918" height="694" alt="2025-10-04_11-08-13" src="https://github.com/user-attachments/assets/01f3d993-f779-4242-bc51-89624277259e" />
 
-<details>
+<summary>
   dml code 
-  <summary>
+  <details>
     Table users {
   id             uuid [pk]
   email          varchar [unique, not null]
@@ -106,5 +106,5 @@ Table system_settings {
   updated_at     timestamp
 }
 
-  </summary>
-</details>
+  </details>
+</summary>
