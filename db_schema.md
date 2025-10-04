@@ -3,7 +3,9 @@
 <summary>
   dml code 
   <details>
-    Table users {
+    <pre>
+      <code>
+           Table users {
   id             uuid [pk]
   email          varchar [unique, not null]
   password_hash  varchar [not null]
@@ -106,5 +108,7 @@ Table system_settings {
   updated_at     timestamp
 }
 
-  </details>
+          </code>
+    </pre>
+     </details>
 </summary>
