@@ -107,8 +107,7 @@ Table system_settings {
   value          text
   updated_at     timestamp
 }
-
-          </code>
-    </pre>
-     </details>
+</code>
+</pre>
+</details>
 </summary>
