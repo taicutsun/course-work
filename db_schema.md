@@ -1,4 +1,4 @@
-<img width="711" height="492" alt="image" src="https://github.com/user-attachments/assets/2b723ced-7d1e-4ae7-a9d8-392fa6888d9a" />
+<img width="981" height="708" alt="image" src="https://github.com/user-attachments/assets/7e5e76db-cf01-4b33-bf26-56375faed7d7" />
 
 
 <summary>
@@ -6,7 +6,7 @@
   <details>
     <pre>
       <code>
-       
+         
   Table users {
   id             uuid [pk]
   email          varchar [unique, not null]
@@ -50,7 +50,7 @@ id         uuid [pk]
 user_id    uuid [ref: > users.id]
 type_id    int [ref: > notification_types.id]
 message    text
-read       boolean [default: false]
+is_read       boolean [default: false]
 created_at timestamp
 }
 Table action_types {
@@ -61,22 +61,17 @@ Table user_logs {
 id             uuid [pk]
 user_id        uuid [ref: > users.id]
 action_id      int [ref: > action_types.id]
-success        boolean
+is_success        boolean
 created_at     timestamp
 }
 Table wallets {
-id             uuid [pk]
-user_id        uuid [ref: > users.id]
-address        varchar [unique, not null]
-created_at     timestamp
+id                 uuid [pk]
+user_id            uuid [ref: > users.id]
+address            varchar [unique, not null]
+balance            numeric [default: 0]
+created_at         timestamp
+last_updated_at_balance timestamp
 }
-Table balances {
-id             uuid [pk]
-wallet_id      uuid [ref: > wallets.id]
-amount         numeric [default: 0]
-updated_at     timestamp
-}
-
 
 </code>
 </pre>
