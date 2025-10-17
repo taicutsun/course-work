@@ -1,10 +1,12 @@
-<img width="699" height="475" alt="image" src="https://github.com/user-attachments/assets/e4aacf23-e4fd-4e2d-8c22-bf44e11769ba" />
+<img width="711" height="492" alt="image" src="https://github.com/user-attachments/assets/2b723ced-7d1e-4ae7-a9d8-392fa6888d9a" />
+
 
 <summary>
   dml code 
   <details>
     <pre>
       <code>
+       
   Table users {
   id             uuid [pk]
   email          varchar [unique, not null]
@@ -51,7 +53,6 @@ message    text
 read       boolean [default: false]
 created_at timestamp
 }
-
 Table action_types {
 id   int [pk]
 name varchar(50) [unique, not null]
@@ -59,7 +60,7 @@ name varchar(50) [unique, not null]
 Table user_logs {
 id             uuid [pk]
 user_id        uuid [ref: > users.id]
-action_id      varchar(50) [ref: > action_types.id]
+action_id      int [ref: > action_types.id]
 success        boolean
 created_at     timestamp
 }
@@ -75,6 +76,7 @@ wallet_id      uuid [ref: > wallets.id]
 amount         numeric [default: 0]
 updated_at     timestamp
 }
+
 
 </code>
 </pre>
