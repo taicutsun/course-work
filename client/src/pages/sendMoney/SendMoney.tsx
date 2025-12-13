@@ -1,7 +1,7 @@
 import React from "react";
 import "../../App.css";
 import "./SendMoney.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   changeBal,
@@ -9,20 +9,21 @@ import {
   selectUserIndex,
 } from "../../app/appSlice";
 import { NavBar } from "../nav/NavBar";
-import { axGetPublicKeys} from "../../api/api";
-import {api} from "../../api/interceptor";
+import {
+  useGetPublicKeysQuery,
+  useSendEtherWithTrackingMutation,
+} from "../../api/apiSlice";
 
 export function SendMoney() {
   const dispatch = useAppDispatch();
 
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState(0);
-  const [checkForInput, setCheckForInput] = useState(false);
-  const [click, setClick] = useState(0);
   const [msg, setMsg] = useState("");
   const [cryptoType, setCryptoType] = useState("ETH"); // Default crypto type
-  const [publicKeys, setPublicKeys] = useState<string[]>();
-const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const { data: publicKeys, isLoading: keysLoading } = useGetPublicKeysQuery();
+  const [sendEther, { isLoading: isSending }] =
+    useSendEtherWithTrackingMutation();
 
   const cryptoOptions = [
     { id: "ETH", name: "Ethereum" },
@@ -33,39 +34,27 @@ const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const balance: number = useAppSelector(selectUserBalance);
   const cryptoI: number = useAppSelector(selectUserIndex);
 
+  const handleSendEther = async () => {
+    if (amount <= 0 || !address) return;
 
-  useEffect(() => {
-    axGetPublicKeys().then((res) => {
-     setPublicKeys(res);
-    });
-  }, []);
+    let converted: number = amount;
+    if (cryptoType === "BTC") converted = amount * 42.93;
+    else if (cryptoType === "LTC") converted = amount * 0.037;
 
-  useEffect(() => {
-    if (amount > 0) setCheckForInput(true);
-    else setCheckForInput(false);
+    try {
+      const result = await sendEther({
+        signerId: cryptoI.toString(),
+        to: address,
+        amountEther: converted.toString(),
+      }).unwrap();
 
-    if (click > 0) {
-      setIsButtonDisabled(true);
-      let converted: number = amount;
-
-      if (cryptoType === "BTC") converted = amount * 42.93;
-      else if (cryptoType === "LTC") converted = amount * 0.037;
-
-      api
-        .post('/blockchain/sendEther', {
-          signerId: cryptoI || 0,
-          to: address,
-          amountEther: converted.toString(),
-        })
-        .then((res) => {
-          setIsButtonDisabled(false);
-
-          dispatch(changeBal(converted));
-          setMsg(res.data.msg);
-          setClick(0);
-        })
+      dispatch(changeBal(converted));
+      setMsg(result.msg || "Транзакция отправлена");
+    } catch (error) {
+      setMsg("Ошибка отправки транзакции");
+      console.error("Send ether failed:", error);
     }
-  }, [amount, address, click, cryptoType, cryptoI, dispatch]);
+  };
 
   return (
     <>
@@ -100,23 +89,33 @@ const [isButtonDisabled, setIsButtonDisabled] = useState(false);
               onChange={(e) => setAmount(parseFloat(e.target.value))}
             />
             <label className="form-label">адресс получателя</label>
-            <select style={{width: "50%", marginBottom:'20px',borderRadius:'5px'}}
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}>
-              {publicKeys?.map((publicKey)=>(
-                  <option value={publicKey}>{publicKey}</option>
+            <select
+              style={{
+                width: "50%",
+                marginBottom: "20px",
+                borderRadius: "5px",
+              }}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              disabled={keysLoading}
+            >
+              <option value="">Выберите адрес</option>
+              {publicKeys?.map((publicKey) => (
+                <option key={publicKey} value={publicKey}>
+                  {publicKey}
+                </option>
               ))}
             </select>
-            {checkForInput && address !== "" ? (
+            {amount > 0 && address !== "" ? (
               <button
-                disabled={isButtonDisabled}
+                disabled={isSending}
                 className="send-button"
                 onClick={(e) => {
                   e.preventDefault();
-                  setClick(click + 1);
+                  handleSendEther();
                 }}
               >
-                отправить ефир
+                {isSending ? "Отправка..." : "отправить ефир"}
               </button>
             ) : (
               <div className="error-message">

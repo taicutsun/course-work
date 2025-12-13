@@ -2,7 +2,20 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
-import { UserType } from '../users/types/user.types';
+
+interface User {
+  id: string;
+  email: string;
+  password?: string;
+  role_id: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface JwtPayload {
+  email: string;
+  sub: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -14,21 +27,17 @@ export class AuthService {
     private usersService: UsersService,
   ) {}
 
-  generateAccessToken(user: UserType): string {
-    return this.jwtService.sign(
-      { username: user.username, sub: user.id },
-      { expiresIn: '7d' },
-    );
+  generateAccessToken(user: User): string {
+    const payload: JwtPayload = { email: user.email, sub: user.id };
+    return this.jwtService.sign(payload, { expiresIn: '7d' });
   }
 
-  generateRefreshToken(user: UserType): string {
-    const refreshToken = this.jwtService.sign(
-      { username: user.username, sub: user.id },
-      {
-        secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
-        expiresIn: '7d',
-      },
-    );
+  generateRefreshToken(user: User): string {
+    const payload: JwtPayload = { email: user.email, sub: user.id };
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
+      expiresIn: '7d',
+    });
     this.refreshTokens.push(refreshToken);
 
     return refreshToken;
@@ -45,14 +54,14 @@ export class AuthService {
     }
 
     try {
-      const payload = this.jwtService.verify<{ username: string; sub: string }>(
+      const payload = this.jwtService.verify<{ email: string; sub: string }>(
         refreshToken,
         {
           secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
         },
       );
 
-      const user = await this.usersService.findOne(payload.username);
+      const user = await this.usersService.findOne(payload.email);
 
       if (!user) {
         // noinspection ExceptionCaughtLocallyJS
@@ -66,17 +75,17 @@ export class AuthService {
   }
 
   async signIn(
-    username: string,
+    email: string,
     pass: string,
-  ): Promise<{ user: UserType; accessToken: string }> {
-    const user = await this.usersService.findOne(username);
+  ): Promise<{ user: User; accessToken: string; refreshToken: string }> {
+    const user = await this.usersService.validateUser(email, pass);
 
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const refreshToken = this.generateRefreshToken(user);
     const accessToken = this.generateAccessToken(user);
-    return Promise.resolve({ user, accessToken, refreshToken });
+    return { user, accessToken, refreshToken };
   }
 }

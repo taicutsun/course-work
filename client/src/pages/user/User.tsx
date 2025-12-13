@@ -1,17 +1,17 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React, {useEffect,useState} from "react";
-import "../../App.css";
+import React, { useEffect, useState } from "react";
 import "./User.css";
 import { Link } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import {
-  CheckUserPass,
-  createUser,
   selectUserName,
-  selectUserBalance, selectUserIndex, setBalance,
+  selectUserBalance,
+  selectUserIndex,
+  setBalance,
 } from "../../app/appSlice";
 import { NavBar } from "../nav/NavBar";
-import {api} from "../../api/interceptor";
+import { api } from "../../api/interceptor";
+import { useCreateUserMutation } from "../../api/apiSlice";
 
 function UserPage() {
   const dispatch = useAppDispatch();
@@ -20,13 +20,16 @@ function UserPage() {
   const cryptoI = useAppSelector(selectUserIndex);
   const balance: number = useAppSelector(selectUserBalance);
 
-   useEffect( () => {
-     api.get('/blockchain/getBalance', {
-      params: { cryptoI },
-    }).then((res:any)=>{
-      dispatch(setBalance(res.data.balance));
-     })
-  }, [dispatch,cryptoI]);
+  useEffect(() => {
+    api
+      .get(`/blockchain/balance/${cryptoI}`)
+      .then((res: any) => {
+        dispatch(setBalance(res.data.balance));
+      })
+      .catch((error) => {
+        console.error("Failed to fetch balance:", error);
+      });
+  }, [dispatch, cryptoI]);
 
   return (
     <div>
@@ -48,6 +51,21 @@ function UserPage() {
           </Link>
         </li>
         <li className="liU">
+          <Link className="link" to="/user/wallets">
+            Управление кошельками
+          </Link>
+        </li>
+        <li className="liU">
+          <Link className="link" to="/user/transactions">
+            История транзакций
+          </Link>
+        </li>
+        <li className="liU">
+          <Link className="link" to="/user/notifications">
+            Уведомления
+          </Link>
+        </li>
+        <li className="liU">
           <Link className="link" to="/">
             Выйти
           </Link>
@@ -56,90 +74,81 @@ function UserPage() {
     </div>
   );
 }
-//for logged user
-
-//for flag
-let donExist: boolean = false;
-
-function setExist(value: boolean): void {
-  donExist = value;
-}
-
-//set func
 
 //for new User
 function Create() {
-  const dispatch = useAppDispatch();
-  const [newuser, setNewUsername] = useState("");
+  const [newemail, setNewEmail] = useState("");
   const [newpass, setNewPass] = useState("");
   const [secpass, setSecPass] = useState("");
-  const [click, setClick] = useState(0);
+  const [donExist, setDonExist] = useState(false);
+  const [createUser, { isLoading, isError }] = useCreateUserMutation();
 
-  const user: CheckUserPass = {
-    username: newuser,
-    password: newpass,
-    secPass: secpass,
-  };
-
-  useEffect(() => {
-    if (
-      newuser !== "" &&
-      newpass === secpass &&
-      newpass !== "" &&
-      donExist !== true
-    ) {
-      //have to rework click>1(not smart solution)
-      console.log(user);
+  const handleCreateUser = async () => {
+    if (newemail && newpass && newpass === secpass) {
+      try {
+        const result = await createUser({
+          email: newemail,
+          password: newpass,
+        }).unwrap();
+        setDonExist(result.dontExist);
+      } catch (error) {
+        console.error("User creation failed:", error);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [click]);
+  };
 
   return (
     <>
       <div id="createWrap">
         <div className="greating">Введите данные для создания пользователя</div>
         <form>
-          <label>Имя</label>
+          <label>Email</label>
           <input
-            type="text"
-            name="username"
-            id="username"
-            onChange={(e) => setNewUsername(e.target.value)}
+            type="email"
+            name="email"
+            id="email"
+            onChange={(e) => setNewEmail(e.target.value)}
+            placeholder="Введите email"
           />
-          <label>пароль</label>
+          <label>Пароль</label>
           <input
-            type="text"
+            type="password"
             name="password"
             id="addPass"
             onChange={(e) => setNewPass(e.target.value)}
+            placeholder="Введите пароль"
           />
-          <label>подтвердите пароль</label>
+          <label>Подтвердите пароль</label>
           <input
-            type="text"
+            type="password"
             name="password"
-            id="addPass"
+            id="confirmPass"
             onChange={(e) => setSecPass(e.target.value)}
+            placeholder="Подтвердите пароль"
           />
         </form>
         <div>
-          {" "}
           <button
             className="loginBtn"
-            onClick={() => {
-              dispatch(createUser(user));
-              setClick(click + 1);
-            }}
+            onClick={handleCreateUser}
+            disabled={isLoading}
           >
-            "Создать пользователя"
+            {isLoading ? "Создание..." : "Создать пользователя"}
           </button>
+          {isError && (
+            <div className="errorMass">Ошибка создания пользователя</div>
+          )}
+          {donExist && (
+            <div className="errorMass">Пользователь уже существует</div>
+          )}
         </div>
         <div className="errorMass">
           {secpass === newpass
             ? ""
-            : "проверте поля : подтверждения пароля и пароль"}
+            : "Проверьте поля: подтверждения пароля и пароль"}
           {donExist === false
             ? ""
-            : "пользователь с текущим именем не существует"}
+            : "Пользователь с текущим email уже существует"}
         </div>
         <div>
           <button className="backBtn">
@@ -152,6 +161,5 @@ function Create() {
     </>
   );
 }
-//for new User
 
-export { UserPage, Create, setExist };
+export { UserPage, Create };

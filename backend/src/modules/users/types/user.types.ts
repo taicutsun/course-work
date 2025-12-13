@@ -1,8 +1,10 @@
 export type UserType = {
   id: string;
-  username: string;
-  password: string;
-  cryptoI: number;
+  email: string;
+  password?: string;
+  role_id: number;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type UserResponse = {

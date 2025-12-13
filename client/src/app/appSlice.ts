@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { axCreateUser } from "../api/api";
 
 //interface and state
 export interface CheckUserPass {
@@ -31,7 +30,7 @@ export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<Omit<UserState,'balance'>>) {
+    setUser(state, action: PayloadAction<Omit<UserState, "balance">>) {
       //login
       state.logged = action.payload.logged;
       state.username = action.payload.username;
@@ -40,8 +39,7 @@ export const appSlice = createSlice({
     createUser(state, action: PayloadAction<CheckUserPass>) {
       state.username = action.payload.username;
       state.password = action.payload.password;
-      if (state.password === action.payload.secPass && state.password !== "")
-        axCreateUser(state.username, state.password);
+      // User creation is now handled by RTK Query in the component
     },
     setBalance(state, action: PayloadAction<number>) {
       state.balance = action.payload;
@@ -52,7 +50,7 @@ export const appSlice = createSlice({
   },
 });
 
-export const { setUser, createUser,setBalance, changeBal } = appSlice.actions;
+export const { setUser, createUser, setBalance, changeBal } = appSlice.actions;
 
 export const selectLog = (state: RootState) => state.app; //if logged
 export const selectUserName = (state: RootState) => state.app.username; //users name

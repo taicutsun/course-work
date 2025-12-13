@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../db/user.entity';
+import { DatabaseModule } from '../database/database.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [DatabaseModule, JwtModule.register({})],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

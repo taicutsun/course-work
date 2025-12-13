@@ -3,10 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BlockchainController } from './blockchain.controller';
 import { BlockchainService } from './blockchain.service';
 import { JwtModule } from '@nestjs/jwt';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
   imports: [
     ConfigModule,
+    DatabaseModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('ACCESS_TOKEN_SECRET'),
