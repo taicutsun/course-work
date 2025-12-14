@@ -11,3 +11,8 @@ num-traits = "0.2"
 num-integer = "0.1"
 rand = { version = "0.8", features = ["std"] }
 
+# GPU computing support
+wgpu = "0.19"
+pollster = "0.3"
+bytemuck = { version = "1.4", features = ["derive"] }
+
