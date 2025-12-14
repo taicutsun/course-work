@@ -1,0 +1,13 @@
+
+[package]
+name = "binexp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Big integer support and traits
+num-bigint = "0.4"
+num-traits = "0.2"
+num-integer = "0.1"
+rand = { version = "0.8", features = ["std"] }
+
