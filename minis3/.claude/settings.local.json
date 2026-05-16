@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmake .. -DCMAKE_BUILD_TYPE=Release)",
+      "Bash(make -j4)",
+      "Bash(cmake ..)",
+      "Bash(git mv *)",
+      "Bash(cmake -B build -S .)",
+      "Bash(cmake --build build)",
+      "Bash(rm -rf /tmp/minis3-test)",
+      "Bash(./build/bin/minis3 -p 18080 -d /tmp/minis3-test)",
+      "Bash(curl -s -o /dev/null -w \"list buckets: %{http_code}\\\\n\" http://localhost:18080/)",
+      "Bash(curl -s -o /dev/null -w \"create bucket: %{http_code}\\\\n\" -X PUT http://localhost:18080/test-bucket)",
+      "Bash(echo \"hello world\")",
+      "Bash(curl -s -o /dev/null -w \"put object: %{http_code}\\\\n\" -X PUT --data-binary @/tmp/m3-up.txt -H \"Content-Length: 12\" http://localhost:18080/test-bucket/hello.txt)",
+      "Bash(curl -s -o /dev/null -w \"list objects: %{http_code}\\\\n\" http://localhost:18080/test-bucket)",
+      "Bash(pkill -f \"minis3 -p 18080\")",
+      "Bash(curl -s -o /dev/null -w \"list buckets:    %{http_code}\\\\n\" http://localhost:18080/)",
+      "Bash(curl -s -o /dev/null -w \"create bucket:   %{http_code}\\\\n\" -X PUT http://localhost:18080/test-bucket)",
+      "Bash(curl -s -o /dev/null -w 'put object:      %{http_code}\\\\n' -X PUT --data-binary @/tmp/m3-up.txt -H 'Content-Length: __TRACKED_VAR__' http://localhost:18080/test-bucket/hello.txt)",
+      "Bash(curl -s -o /dev/null -w \"list objects:    %{http_code}\\\\n\" http://localhost:18080/test-bucket)",
+      "Bash(cmake --build build --clean-first)",
+      "Bash(curl -s -o /dev/null -w \"create:    %{http_code}\\\\n\" -X PUT http://localhost:18080/b)",
+      "Bash(curl -s -o /dev/null -w 'put:       %{http_code} etag=%header{etag}\\\\n' -X PUT --data-binary @/tmp/m3-up.txt -H 'Content-Length: __TRACKED_VAR__' http://localhost:18080/b/h.txt)",
+      "Bash(curl -s -o /dev/null -w \"get:       %{http_code}\\\\n\" http://localhost:18080/b/h.txt)",
+      "Bash(curl -s http://localhost:18080/b/h.txt)",
+      "Bash(curl -s -o /dev/null -w \"del bkt:   %{http_code}\\\\n\" -X DELETE http://localhost:18080/b)"
+    ]
+  }
+}

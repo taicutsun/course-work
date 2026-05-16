@@ -1,0 +1,62 @@
+[
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -isystem /opt/homebrew/opt/openssl@3/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3.dir/src/main.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/main.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/main.cpp",
+  "output": "CMakeFiles/minis3.dir/src/main.cpp.o"
+},
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -isystem /opt/homebrew/opt/openssl@3/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3.dir/src/core/config.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/core/config.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/core/config.cpp",
+  "output": "CMakeFiles/minis3.dir/src/core/config.cpp.o"
+},
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -isystem /opt/homebrew/opt/openssl@3/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3.dir/src/core/thread_pool.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/core/thread_pool.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/core/thread_pool.cpp",
+  "output": "CMakeFiles/minis3.dir/src/core/thread_pool.cpp.o"
+},
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -isystem /opt/homebrew/opt/openssl@3/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3.dir/src/http/http_parser.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/http/http_parser.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/http/http_parser.cpp",
+  "output": "CMakeFiles/minis3.dir/src/http/http_parser.cpp.o"
+},
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -isystem /opt/homebrew/opt/openssl@3/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3.dir/src/storage/object_store.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/storage/object_store.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/storage/object_store.cpp",
+  "output": "CMakeFiles/minis3.dir/src/storage/object_store.cpp.o"
+},
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -isystem /opt/homebrew/opt/openssl@3/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3.dir/src/server/server.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/server/server.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/server/server.cpp",
+  "output": "CMakeFiles/minis3.dir/src/server/server.cpp.o"
+},
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -isystem /opt/homebrew/opt/openssl@3/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3.dir/src/server/tls.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/server/tls.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/server/tls.cpp",
+  "output": "CMakeFiles/minis3.dir/src/server/tls.cpp.o"
+},
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -isystem /opt/homebrew/opt/openssl@3/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3.dir/src/server/ui.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/server/ui.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/server/ui.cpp",
+  "output": "CMakeFiles/minis3.dir/src/server/ui.cpp.o"
+},
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -isystem /opt/homebrew/opt/openssl@3/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3.dir/src/server/tui.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/server/tui.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/server/tui.cpp",
+  "output": "CMakeFiles/minis3.dir/src/server/tui.cpp.o"
+},
+{
+  "directory": "/Users/user/Desktop/S/corsach/minis3/build",
+  "command": "/usr/bin/c++  -I/Users/user/Desktop/S/corsach/minis3/include -I/opt/homebrew/include -O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -o CMakeFiles/minis3cli.dir/src/client/tui_client.cpp.o -c /Users/user/Desktop/S/corsach/minis3/src/client/tui_client.cpp",
+  "file": "/Users/user/Desktop/S/corsach/minis3/src/client/tui_client.cpp",
+  "output": "CMakeFiles/minis3cli.dir/src/client/tui_client.cpp.o"
+}
+]
